@@ -1,0 +1,41 @@
+CREATE TABLE "account" (
+  "id" uuid PRIMARY KEY,
+  "owner" varchar NOT NULL,
+  "balance" bigint NOT NULL,
+  "currency" varchar NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT 'now()',
+  "updated_at" timestamptz NOT NULL DEFAULT 'now()'
+);
+
+CREATE TABLE "entries" (
+  "id" uuid PRIMARY KEY,
+  "account_id" uuid NOT NULL,
+  "amount" bigint NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT 'now()',
+  "updated_at" timestamptz NOT NULL DEFAULT 'now()'
+);
+
+CREATE TABLE "transfer" (
+  "id" uuid PRIMARY KEY,
+  "from_account_id" uuid NOT NULL,
+  "to_account_id" uuid NOT NULL,
+  "amount" bigint NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT 'now()',
+  "updated_at" timestamptz NOT NULL DEFAULT 'now()'
+);
+
+CREATE INDEX ON "account" ("owner");
+
+CREATE INDEX ON "entries" ("account_id");
+
+CREATE INDEX ON "transfer" ("from_account_id");
+
+CREATE INDEX ON "transfer" ("to_account_id");
+
+CREATE INDEX ON "transfer" ("from_account_id", "to_account_id");
+
+ALTER TABLE "entries" ADD FOREIGN KEY ("account_id") REFERENCES "account" ("id");
+
+ALTER TABLE "transfer" ADD FOREIGN KEY ("from_account_id") REFERENCES "account" ("id");
+
+ALTER TABLE "transfer" ADD FOREIGN KEY ("to_account_id") REFERENCES "account" ("id");
