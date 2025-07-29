@@ -1,7 +1,17 @@
+DB_URL=postgres://postgres:postgres@localhost:5432/go_bank_app_db?sslmode=disable
+MIGRATION_PATH=app/db/migration
+MIGRATE=migrate -path ${MIGRATION_PATH} -database $(DB_URL)
+
 migrate-up:
-	migrate -path app/db/migration -database "postgres://postgres:postgres@localhost:5432/go_bank_app_db?sslmode=disable" -verbose up
+	$(MIGRATE) up
 
 migrate-down:
-	migrate -path app/db/migration -database "postgres://postgres:postgres@localhost:5432/go_bank_app_db?sslmode=disable" -verbose down
+	$(MIGRATE) down 1
 
-.PHONY: migrate-up migrate-down
+migrate-new:
+	migrate create -ext sql -dir ${MIGRATION_PATH} -seq $(name)
+
+sqlc:
+	sqlc generate
+
+.PHONY: migrate-up migrate-down sqlc migrate-new
