@@ -14,7 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build: ./app
+    build: .
     dns:
       - 8.8.8.8
     depends_on:
