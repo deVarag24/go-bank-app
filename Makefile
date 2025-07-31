@@ -14,4 +14,7 @@ migrate-new:
 sqlc:
 	sqlc generate
 
-.PHONY: migrate-up migrate-down sqlc migrate-new
+test:
+	go test -v -cover ./...
+
+.PHONY: migrate-up migrate-down sqlc migrate-new test

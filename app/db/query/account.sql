@@ -17,7 +17,7 @@ LIMIT $1
 OFFSET $2;
 
 
--- name: UpdateAccount :one
+-- name: UpdateAccountBalance :one
 UPDATE account
   set balance = $2
 WHERE id = $1
