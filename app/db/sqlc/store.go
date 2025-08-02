@@ -57,6 +57,7 @@ type TransferTxResult struct{
 	ToEntry Entry
 }
 
+
 // it performs money transfer from one account to other in one tx
 func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error){
 	var result TransferTxResult
@@ -95,7 +96,27 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 
-		// TODO: update accounts
+		// update account
+
+		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			Amount: -arg.Amount,
+			ID: arg.FromAccountId,
+		})
+
+		if err != nil{
+			return err
+		}
+
+		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			Amount: arg.Amount,
+			ID: arg.ToAccountId,
+		})
+
+		if err != nil{
+			return err
+		}
+
+
 
 		return nil
 	})
