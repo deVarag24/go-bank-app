@@ -1,25 +1,37 @@
 package main
 
 import (
-    "database/sql"
-    "fmt"
-    "log"
-    "os"
+	"database/sql"
+	"log"
+	"my-go-app/app/api"
+	db "my-go-app/app/db/sqlc"
 
-    _ "github.com/lib/pq"
+	_ "github.com/lib/pq"
+)
+
+const (
+	dbDriver = "postgres"
+	dbSource = "postgres://postgres:postgres@localhost:5432/go_bank_app_db?sslmode=disable"
+    serverAddress = "localhost:3000"
 )
 
 func main() {
-    dbURL := os.Getenv("DATABASE_URL")
-    db, err := sql.Open("postgres", dbURL)
+    conn, err := sql.Open(dbDriver, dbSource)
     if err != nil {
         log.Fatal("Failed to open DB:", err)
     }
-    defer db.Close()
+    defer conn.Close()
 
-    if err := db.Ping(); err != nil {
-        log.Fatal("Failed to connect:", err)
+    if err := conn.Ping(); err != nil {
+        log.Fatal("Failed to connect to db:", err)
     }
 
-    fmt.Println("Connected to the database successfullyyyyyyyyyy!")
+    store := db.NewStore(conn)
+    server := api.NewServer(store)
+
+    err = server.StartServer(serverAddress)
+    if err != nil {
+        log.Fatal("Failed to connect to server:", err)
+    }
+
 }
